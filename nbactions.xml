@@ -13,7 +13,7 @@
                 <exec.vmArgs></exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs></exec.appArgs>
-                <exec.mainClass>br.com.ifba.CursoSave</exec.mainClass>
+                <exec.mainClass>br.com.ifba.atividade11.CursoSave</exec.mainClass>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

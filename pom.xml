@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <exec.mainClass>br.com.ifba.prg03persistencia.Prg03persistencia</exec.mainClass>
+        <exec.mainClass>br.com.ifba.atividade11.CursoSave</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
@@ -24,11 +24,11 @@
             <version>3.1.0</version>
         </dependency>
 
-        <dependency>
+       <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
-        </dependency>
+            <version>8.0.33</version>
+       </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
