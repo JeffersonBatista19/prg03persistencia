@@ -4,6 +4,19 @@
  */
 package br.com.ifba.atividade11.curso.view;
 
+import br.com.ifba.atividade11.curso.entity.Curso;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author jeffe
@@ -15,6 +28,9 @@ public class CursoListar extends javax.swing.JFrame {
      */
     public CursoListar() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        List<Curso> cursos = obterTodos();
+        prencherTabela(cursos);
     }
 
     /**
@@ -30,10 +46,16 @@ public class CursoListar extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblTabela = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        txtPesquisa = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtNome = new javax.swing.JTextField();
+        txtDescricao = new javax.swing.JTextField();
+        btnDel = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -52,27 +74,27 @@ public class CursoListar extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 102));
 
-        jTable2.setBackground(new java.awt.Color(204, 204, 204));
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblTabela.setBackground(new java.awt.Color(204, 204, 204));
+        tblTabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
-                "Nome", "Quantidade", "Descrição", "Fornecedor", "Editar", "Remover"
+                "ID", "Nome", "Descrição"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(tblTabela);
+        if (tblTabela.getColumnModel().getColumnCount() > 0) {
+            tblTabela.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         jButton2.setBackground(new java.awt.Color(204, 204, 204));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Adiconar.png"))); // NOI18N
@@ -82,50 +104,106 @@ public class CursoListar extends javax.swing.JFrame {
             }
         });
 
-        jTextField1.setBackground(new java.awt.Color(204, 204, 204));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtPesquisa.setBackground(new java.awt.Color(204, 204, 204));
+        txtPesquisa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtPesquisaActionPerformed(evt);
+            }
+        });
+        txtPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPesquisaKeyPressed(evt);
             }
         });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Lupa (1).png"))); // NOI18N
 
+        jLabel2.setText("Nome");
+
+        jLabel3.setText("Descrição");
+
+        txtNome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNomeActionPerformed(evt);
+            }
+        });
+
+        btnDel.setBackground(new java.awt.Color(204, 0, 51));
+        btnDel.setForeground(new java.awt.Color(0, 0, 0));
+        btnDel.setText("DELETAR");
+        btnDel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDelActionPerformed(evt);
+            }
+        });
+
+        btnEdit.setBackground(new java.awt.Color(51, 204, 0));
+        btnEdit.setForeground(new java.awt.Color(0, 0, 0));
+        btnEdit.setText("EDITAR");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 791, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
+                .addGap(57, 57, 57)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(395, 395, 395))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnDel, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                .addGap(95, 95, 95)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(txtNome)
+                    .addComponent(txtDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE))
+                .addGap(54, 54, 54))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(86, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 791, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(txtPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(49, 49, 49))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel2)
+                                    .addGap(4, 4, 4)
+                                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel3)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(btnEdit)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(17, 17, 17))
-                            .addComponent(jButton2))
-                        .addGap(36, 36, 36)))
+                                .addGap(52, 52, 52)
+                                .addComponent(jLabel1)))
+                        .addGap(5, 5, 5)
+                        .addComponent(btnDel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(54, 54, 54))
+                .addGap(17, 17, 17))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -134,7 +212,7 @@ public class CursoListar extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 45, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,12 +226,146 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        Curso tab = new Curso();
+        
+        //setando os dados no banco de dados
+        tab.setNome(txtNome.getText());
+        tab.setDescricao(txtDescricao.getText());
+        
+        //chamando o banco de dados
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
+        EntityManager manager = factory.createEntityManager();
+        
+        //cadastrando no banco de dados
+        manager.getTransaction().begin();
+        manager.persist(tab);
+        manager.getTransaction().commit();
+        
+        manager.close();
+        factory.close();
+        
+        //cadastrando os dados da tabela da tela
+        DefaultTableModel cur = (DefaultTableModel) tblTabela.getModel();
+        Object[] dados = {tab.getId(),tab.getNome(),tab.getDescricao()};
+        cur.addRow(dados);
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPesquisaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtPesquisaActionPerformed
 
+    private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNomeActionPerformed
+
+    private void btnDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelActionPerformed
+        // TODO add your handling code here:
+        //chamando o banco
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
+        EntityManager manager = factory.createEntityManager();
+        
+        int linha = tblTabela.getSelectedRow();//pegando a linha da tabela
+        Long id = (Long) tblTabela.getValueAt(linha, 0);//pegando o id da tarefa
+        
+        Curso enc = manager.find(Curso.class, id);//instanciando o manager.find
+    
+        //removendo do banco
+        manager.getTransaction().begin();
+        manager.remove(enc);
+        manager.getTransaction().commit();
+        
+        manager.close();
+        factory.close();
+        
+         //deletando os dados da tabela
+        if(tblTabela.getSelectedRow() != -1){
+            DefaultTableModel tar = (DefaultTableModel) tblTabela.getModel();
+            tar.removeRow(tblTabela.getSelectedRow()); 
+        }else{
+            JOptionPane.showMessageDialog(null, "Erro!");
+        }
+    }//GEN-LAST:event_btnDelActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+        //editando os dados no banco
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
+        EntityManager manager = factory.createEntityManager();
+        
+        int linha = tblTabela.getSelectedRow();//pegando a linha da tabela
+        Long id = (Long) tblTabela.getValueAt(linha, 0);//pegando o id do curso
+        
+        Curso enc = manager.find(Curso.class, id);
+        
+        //setando o novos dados na tabela
+        enc.setNome(txtNome.getText());
+        enc.setDescricao(txtDescricao.getText());
+        
+        manager.getTransaction().begin();
+        manager.merge(enc);
+        manager.getTransaction().commit();
+    
+        manager.close();
+        factory.close();
+        
+        //editando os dados na tabela
+        if(tblTabela.getSelectedRow() != -1){
+            tblTabela.setValueAt(txtNome.getText(), tblTabela.getSelectedRow(), 1);
+            tblTabela.setValueAt(txtDescricao.getText(), tblTabela.getSelectedRow(), 2);
+        }
+        
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void txtPesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyPressed
+        // TODO add your handling code here:
+        
+        //pegando o dado para pesquisar
+        String busca = (txtPesquisa.getText()).toLowerCase();
+        
+        DefaultTableModel cur = (DefaultTableModel) tblTabela.getModel();
+        cur.setNumRows(0);
+        
+        //criando uma lista de cursos
+        List<Curso> cursos = obterTodos();
+        
+        //for para verificação do dado digitado é igual ao pesquisado
+        for(Curso tarefa: cursos){
+            if(tarefa.getDescricao().toLowerCase().contains(busca)){
+               Object[] dados = {tarefa.getId(),tarefa.getNome(), tarefa.getDescricao()};
+               cur.addRow(dados);
+            }
+        }
+    }//GEN-LAST:event_txtPesquisaKeyPressed
+     public List<Curso> obterTodos(){
+        
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
+        EntityManager manager = factory.createEntityManager();
+        
+        //obtendo todos os dados do banco
+        manager.getTransaction().begin();
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
+        CriteriaQuery<Curso> cq = cb.createQuery(Curso.class);
+        Root<Curso> rootEntry = cq.from(Curso.class);
+        CriteriaQuery<Curso> all = cq.select(rootEntry);
+        TypedQuery<Curso> allQuery = manager.createQuery(all);
+        List<Curso> cursos = allQuery.getResultList();
+        
+        manager.close();
+        factory.close();
+        
+        return cursos;
+    }
+     public void prencherTabela(List<Curso> cursos){
+         
+         DefaultTableModel cur = (DefaultTableModel) tblTabela.getModel();
+         cur.setNumRows(0);
+         
+         //prenchendo a tabela com os dados
+         for(Curso curso: cursos){
+               Object[] dados = {curso.getId(),curso.getNome(),curso.getDescricao()};
+               cur.addRow(dados);
+        }
+     }
     /**
      * @param args the command line arguments
      */
@@ -190,13 +402,19 @@ public class CursoListar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDel;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblTabela;
+    private javax.swing.JTextField txtDescricao;
+    private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtPesquisa;
     // End of variables declaration//GEN-END:variables
 }
