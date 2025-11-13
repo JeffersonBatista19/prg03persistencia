@@ -4,8 +4,8 @@
 
 package br.com.ifba.atividade11;
 
-import br.com.ifba.atividade11.curso.entity.Curso;
-import br.com.ifba.atividade11.curso.view.CursoListar;
+import br.com.ifba.curso.atividade11.entity.Curso;
+import br.com.ifba.curso.atividade11.view.CursoListar;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
