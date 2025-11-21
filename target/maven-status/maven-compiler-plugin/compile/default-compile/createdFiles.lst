@@ -1,3 +1,6 @@
+br\com\ifba\atividade11\service\CursoIService.class
+br\com\ifba\curso\atividade11\controller\CursoIController.class
+br\com\ifba\atividade11\infraestructure\util\StringUtil.class
 br\com\ifba\curso\atividade11\view\CursoListar$4.class
 br\com\ifba\curso\atividade11\dao\CursoDao.class
 br\com\ifba\curso\atividade11\entity\Curso.class
@@ -5,6 +8,7 @@ br\com\ifba\curso\atividade11\view\CursoListar.class
 br\com\ifba\curso\atividade11\dao\CursoIDao.class
 br\com\ifba\atividade11\infraestructure\entity\PersistenceEntity.class
 br\com\ifba\curso\atividade11\view\CursoListar$3.class
+br\com\ifba\atividade11\service\CursoService.class
 br\com\ifba\curso\atividade11\view\CursoListar$1.class
 br\com\ifba\curso\atividade11\view\CursoListar$7.class
 br\com\ifba\atividade11\infraestructure\dao\GenericDao.class
@@ -13,4 +17,5 @@ br\com\ifba\atividade11\infraestructure\dao\GenericIDao.class
 br\com\ifba\curso\atividade11\view\CursoListar$8.class
 br\com\ifba\curso\atividade11\view\CursoListar$2.class
 br\com\ifba\curso\atividade11\view\CursoListar$6.class
+br\com\ifba\curso\atividade11\controller\CursoController.class
 br\com\ifba\curso\atividade11\view\CursoListar$5.class

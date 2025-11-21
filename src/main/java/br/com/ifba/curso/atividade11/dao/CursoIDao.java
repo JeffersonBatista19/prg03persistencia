@@ -6,11 +6,13 @@ package br.com.ifba.curso.atividade11.dao;
 
 import br.com.ifba.curso.atividade11.entity.Curso;
 import br.com.ifba.atividade11.infraestructure.dao.GenericIDao;
+import java.util.List;
 
-/**
- *
- * @author jeffe
- */
-public interface CursoIDao extends GenericIDao<Curso>{
-    public abstract Curso buscarPorNome(String Nome);
+public interface CursoIDao extends GenericIDao<Curso> {
+
+    List<Curso> findByNome(String nome);
+
+    Curso findById(Long id);
+
+    public void delete(Long id);
 }

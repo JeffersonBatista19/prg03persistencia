@@ -4,6 +4,7 @@
  */
 package br.com.ifba.curso.atividade11.view;
 
+import br.com.ifba.curso.atividade11.controller.CursoController;
 import br.com.ifba.curso.atividade11.entity.Curso;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -118,8 +119,12 @@ public class CursoListar extends javax.swing.JFrame {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Lupa (1).png"))); // NOI18N
 
+        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Nome");
 
+        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Descrição");
 
         txtNome.addActionListener(new java.awt.event.ActionListener() {
@@ -232,17 +237,8 @@ public class CursoListar extends javax.swing.JFrame {
         tab.setNome(txtNome.getText());
         tab.setDescricao(txtDescricao.getText());
         
-        //chamando o banco de dados
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
-        EntityManager manager = factory.createEntityManager();
-        
-        //cadastrando no banco de dados
-        manager.getTransaction().begin();
-        manager.persist(tab);
-        manager.getTransaction().commit();
-        
-        manager.close();
-        factory.close();
+        CursoController control = new CursoController();
+        control.save(tab);
         
         //cadastrando os dados da tabela da tela
         DefaultTableModel cur = (DefaultTableModel) tblTabela.getModel();
@@ -260,22 +256,16 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelActionPerformed
         // TODO add your handling code here:
-        //chamando o banco
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
-        EntityManager manager = factory.createEntityManager();
+        CursoController control = new CursoController();
+        
+        Curso cur = new Curso();
         
         int linha = tblTabela.getSelectedRow();//pegando a linha da tabela
         Long id = (Long) tblTabela.getValueAt(linha, 0);//pegando o id da tarefa
         
-        Curso enc = manager.find(Curso.class, id);//instanciando o manager.find
-    
-        //removendo do banco
-        manager.getTransaction().begin();
-        manager.remove(enc);
-        manager.getTransaction().commit();
+        cur = control.findById(id);
         
-        manager.close();
-        factory.close();
+        control.delete(cur);
         
          //deletando os dados da tabela
         if(tblTabela.getSelectedRow() != -1){
@@ -289,25 +279,20 @@ public class CursoListar extends javax.swing.JFrame {
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
         //editando os dados no banco
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
-        EntityManager manager = factory.createEntityManager();
+        
+        CursoController control = new CursoController();
+        Curso cur = new Curso();
         
         int linha = tblTabela.getSelectedRow();//pegando a linha da tabela
         Long id = (Long) tblTabela.getValueAt(linha, 0);//pegando o id do curso
         
-        Curso enc = manager.find(Curso.class, id);
+         cur = control.findById(id);
+         
+        cur.setNome(txtNome.getText());
+        cur.setDescricao(txtDescricao.getText());
         
-        //setando o novos dados na tabela
-        enc.setNome(txtNome.getText());
-        enc.setDescricao(txtDescricao.getText());
-        
-        manager.getTransaction().begin();
-        manager.merge(enc);
-        manager.getTransaction().commit();
-    
-        manager.close();
-        factory.close();
-        
+          control.update(cur);
+          
         //editando os dados na tabela
         if(tblTabela.getSelectedRow() != -1){
             tblTabela.setValueAt(txtNome.getText(), tblTabela.getSelectedRow(), 1);
@@ -317,55 +302,72 @@ public class CursoListar extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void txtPesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyPressed
-        // TODO add your handling code here:
-        
-        //pegando o dado para pesquisar
-        String busca = (txtPesquisa.getText()).toLowerCase();
-        
+        // pegando o dado para pesquisar
+        String busca = (txtPesquisa.getText() == null) ? "" : txtPesquisa.getText().trim();
+
         DefaultTableModel cur = (DefaultTableModel) tblTabela.getModel();
         cur.setNumRows(0);
-        
-        //criando uma lista de cursos
-        List<Curso> cursos = obterTodos();
-        
-        //for para verificação do dado digitado é igual ao pesquisado
-        for(Curso tarefa: cursos){
-            if(tarefa.getDescricao().toLowerCase().contains(busca)){
-               Object[] dados = {tarefa.getId(),tarefa.getNome(), tarefa.getDescricao()};
-               cur.addRow(dados);
+
+        CursoController control = new CursoController();
+        try {
+        List<Curso> cursos;
+        if (busca.isEmpty()) {
+            // campo vazio -> mostra todos
+            cursos = control.findAll();
+        } else {
+            // busca por nome (assume que findByNome faz LIKE internamente)
+            cursos = control.findByNome(busca);
+        }
+
+        if (cursos != null) {
+            for (Curso tarefa : cursos) {
+                Object[] dados = {tarefa.getId(), tarefa.getNome(), tarefa.getDescricao()};
+                cur.addRow(dados);
             }
         }
-    }//GEN-LAST:event_txtPesquisaKeyPressed
-     public List<Curso> obterTodos(){
-        
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("cursoPU");
-        EntityManager manager = factory.createEntityManager();
-        
-        //obtendo todos os dados do banco
-        manager.getTransaction().begin();
-        CriteriaBuilder cb = manager.getCriteriaBuilder();
-        CriteriaQuery<Curso> cq = cb.createQuery(Curso.class);
-        Root<Curso> rootEntry = cq.from(Curso.class);
-        CriteriaQuery<Curso> all = cq.select(rootEntry);
-        TypedQuery<Curso> allQuery = manager.createQuery(all);
-        List<Curso> cursos = allQuery.getResultList();
-        
-        manager.close();
-        factory.close();
-        
-        return cursos;
-    }
-     public void prencherTabela(List<Curso> cursos){
-         
-         DefaultTableModel cur = (DefaultTableModel) tblTabela.getModel();
-         cur.setNumRows(0);
-         
-         //prenchendo a tabela com os dados
-         for(Curso curso: cursos){
-               Object[] dados = {curso.getId(),curso.getNome(),curso.getDescricao()};
-               cur.addRow(dados);
+        } catch (RuntimeException e) {
+        JOptionPane.showMessageDialog(this, "Erro na busca: " + e.getMessage());
         }
-     }
+    }//GEN-LAST:event_txtPesquisaKeyPressed
+    public List<Curso> obterTodos(){
+        
+        CursoController control = new CursoController();
+    
+        try {
+        List<Curso> cursos = control.findAll();
+        if (cursos == null) {
+            return new java.util.ArrayList<>();
+        }
+        return cursos;
+        } catch (RuntimeException e) {
+        JOptionPane.showMessageDialog(this, "Erro ao carregar cursos: " + e.getMessage());
+        return new java.util.ArrayList<>();
+        }
+    }
+
+     public void prencherTabela(List<Curso> cursos){
+        // atualiza a tabela na thread de UI
+        SwingUtilities.invokeLater(() -> {
+        DefaultTableModel model = (DefaultTableModel) tblTabela.getModel();
+        model.setRowCount(0); // limpa tabela
+
+        if (cursos == null || cursos.isEmpty()) {
+            // opcional: mostrar uma linha vazia ou mensagem
+            return;
+        }
+
+        for (Curso curso : cursos) {
+            // proteção contra campos null
+            Object id = curso.getId();
+            Object nome = (curso.getNome() == null ? "" : curso.getNome());
+            Object desc = (curso.getDescricao() == null ? "" : curso.getDescricao());
+            Object[] row = { id, nome, desc };
+            model.addRow(row);
+        }
+        });
+    }
+
+
     /**
      * @param args the command line arguments
      */

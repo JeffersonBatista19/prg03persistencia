@@ -43,7 +43,7 @@ public class GenericDao <Entity extends PersistenceEntity> implements GenericIDa
     }
     
     @Override
-    public Entity atualizar(Entity entity) {
+    public Entity update(Entity entity) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -61,7 +61,7 @@ public class GenericDao <Entity extends PersistenceEntity> implements GenericIDa
     }
     
     @Override
-    public void excluir(Entity entity) {
+    public void delete(Entity entity) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             //iniciaa transação
@@ -80,7 +80,7 @@ public class GenericDao <Entity extends PersistenceEntity> implements GenericIDa
     }
     
     @Override
-    public List<Entity> listarTodos() {
+    public List<Entity> findAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             // faz a execução de uma consulta JPQL para buscar todas as entidades do tipo da classe genérica
@@ -91,7 +91,7 @@ public class GenericDao <Entity extends PersistenceEntity> implements GenericIDa
     }
 
     @Override
-    public Entity buscarId(Long id) {
+    public Entity findById(Long id) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             return entityManager.find(getTypeClass(), id);  // esse faz a busca da entidade pelo ID

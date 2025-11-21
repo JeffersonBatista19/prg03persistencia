@@ -16,14 +16,14 @@ public interface GenericIDao <Entity extends PersistenceEntity> {
     public abstract Entity save(Entity obj);
 
     // atualiza os dados de uma entidade existente
-    public abstract Entity atualizar(Entity obj);
+    public abstract Entity update(Entity obj);
 
     // exclui a entidade do banco de dados
-    public abstract void excluir(Entity obj);
+    public abstract void delete(Entity obj);
 
     // retorna uma lista de todas as entidades
-    public abstract List<Entity> listarTodos();
+    public abstract List<Entity> findAll();
 
     // uma entidade pelo seu ID
-    public abstract Entity buscarId(Long id);
+    public abstract Entity findById(Long id);
 }
